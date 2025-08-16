@@ -11,11 +11,16 @@ def get_files_info(working_directory, directory="."):
     
     if not os.path.isdir(absolutePath):
         return f'Error: "{directory}" is not a directory'
-    
-    # print(f"{os.listdir(absolutePath)}")
 
-    for pathPart in os.listdir(absolutePath):
-        # print(pathPart)
-        # partFullPath = f"{absolutePath}/{pathPart}"
-        partFullPath = os.path.join(absolutePath,pathPart)
-        print(f"- {pathPart}: file_size={os.path.getsize(partFullPath)} bytes, is_dir={os.path.isdir(partFullPath)}")
+    files = []
+
+    try:
+        for pathPart in os.listdir(absolutePath):
+            partFullPath = os.path.join(absolutePath,pathPart)
+            files.append(f"- {pathPart}: file_size={os.path.getsize(partFullPath)} bytes, is_dir={os.path.isdir(partFullPath)}")
+        
+        print(files)
+        print("\n".join(files))
+        return "\n".join(files)
+    except Exception as e:
+        return f"Error: {str(e)}"
