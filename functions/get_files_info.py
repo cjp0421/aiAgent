@@ -18,9 +18,7 @@ def get_files_info(working_directory, directory="."):
         for pathPart in os.listdir(absolutePath):
             partFullPath = os.path.join(absolutePath,pathPart)
             files.append(f"- {pathPart}: file_size={os.path.getsize(partFullPath)} bytes, is_dir={os.path.isdir(partFullPath)}")
-        
-        print(files)
-        print("\n".join(files))
+
         return "\n".join(files)
     except Exception as e:
         return f"Error: {str(e)}"
