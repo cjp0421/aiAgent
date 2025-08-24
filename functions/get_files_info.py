@@ -17,6 +17,20 @@ schema_get_files_info = types.FunctionDeclaration(
     ),
 )
 
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description="Gets file content, constrained to the working directory.",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "directory": types.Schema(
+                type=types.Type.STRING,
+                description="The directory to get the file the content will be retrieved from, relative to the working directory. If not provided, gets files' content in the working directory itself.",
+            ),
+        },
+    ),
+)
+
 def get_files_info(working_directory, directory="."):
     fullPath = os.path.join(working_directory, directory)
 
