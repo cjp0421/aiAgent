@@ -1,7 +1,6 @@
-import os
 from functions.get_files_info import get_file_content, get_files_info
-from functions.run_python import run_python_file
-from functions.write_files import write_file
+from functions.run_python_file import run_python_file
+from functions.write_files import write_files
 from google.genai import types
 
 def call_function(function_call_part, verbose=False):
@@ -13,8 +12,8 @@ def call_function(function_call_part, verbose=False):
     function_map = {
         "get_file_content": get_file_content,
         "get_files_info": get_files_info,
-        "run_python": run_python_file,
-        "write_file": write_file,
+        "run_python_file": run_python_file,
+        "write_files": write_files,
     }
 
     try:

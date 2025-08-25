@@ -1,8 +1,8 @@
 import os
 from google.genai import types
 
-schema_write_file = types.FunctionDeclaration(
-    name="write_file",
+schema_write_files = types.FunctionDeclaration(
+    name="write_files",
     description="Writes to a file, constrained to the working directory. Creates the file if it doesn't exist.",
     parameters=types.Schema(
         type=types.Type.OBJECT,
@@ -20,7 +20,7 @@ schema_write_file = types.FunctionDeclaration(
     ),
 )
 
-def write_file(working_directory, file_path, content):
+def write_files(working_directory, file_path, content):
     absolute_file_path = os.path.abspath(os.path.join(working_directory, file_path))
     allowed_directory = os.path.abspath(working_directory)
     if not absolute_file_path.startswith(allowed_directory):

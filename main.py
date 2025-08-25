@@ -3,17 +3,18 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from functions.call_functions import call_function
 from functions.get_files_info import schema_get_files_info
 from functions.get_files_info import schema_get_file_content
-from functions.run_python import schema_run_python_file
-from functions.write_files import schema_write_file
+from functions.run_python_file import schema_run_python_file
+from functions.write_files import schema_write_files
 
 available_functions = types.Tool(
     function_declarations=[
         schema_get_files_info,
         schema_get_file_content,
         schema_run_python_file,
-        schema_write_file
+        schema_write_files
     ]
 )
 
@@ -39,7 +40,8 @@ def main():
 
     messages = [
     types.Content(role="user", parts=[types.Part(text=sys.argv[1])]),
-]
+    ]
+    
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
         model='gemini-2.0-flash-001',
@@ -50,17 +52,21 @@ def main():
             )
     )
 
+    verbose = len(sys.argv) > 2 and sys.argv[2] == '--verbose'
     
     if response.function_calls:
         for function_call_part in response.function_calls:
             print(f"Calling function: {function_call_part.name}({function_call_part.args})")
-    elif len(sys.argv) > 2 and sys.argv[2] == '--verbose':
-        print(f"User prompt: {sys.argv[1]}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")   
-        print(f"{response.text}")
-
+            result = call_function(function_call_part=function_call_part, verbose=verbose)
+            if not result.parts[0].function_response.response:
+                raise Exception("response is malformed")
+            if verbose:
+                print(f"-> {result.parts[0].function_response.response}")
     else:
+        if verbose:
+            print(f"User prompt: {sys.argv[1]}")
+            print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+            print(f"Response tokens: {response.usage_metadata.candidates_token_count}")   
         print(f"{response.text}")
 
 if __name__ == "__main__":
